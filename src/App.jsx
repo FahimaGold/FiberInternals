@@ -2,9 +2,13 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
+import { MyButton } from './components/MyButton'
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+
+   function updateCounter(){
+    setCount((count) => count + 1);
+  }
 
   return (
     <>
@@ -17,10 +21,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      
-      <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+      <MyButton onClick={updateCounter} count={count}/>
     </>
   )
 }
