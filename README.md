@@ -26,15 +26,48 @@ FiberNode `{tag: 5, key: null, elementType: 'button', type: 'button', stateNode:
 - `__reactProps$hwiy9k0i6jt`:  which is the properties passed to the fiber, and in this case, it is the onClick, and count.
 `{children: Array(2), onClick: ƒ}`.
 
-We expend further the fiber and the props:
+
+## Description the content of the fiber tree
+
+The fiber node in `__reactFiber$hwiy9k0i6jt` of the `MyButton` component contains the following properties:
+- `tag`: It is a number that represents the type of the fiber. For instance, `5` means a DOM element, `6` a text node, and here is the entire list from [react describeFibers.js](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/fixtures/fiber-debugger/src/describeFibers.js#L12):
+    - `0`: Indeterminate
+    - `1`: Function component
+    - `2`: Class component
+    - `3`: The root of the host component (Eg, App, the root of the react App)
+    - `4`: A Portal
+    - `5`: A host component (a DOM element)
+    - `6`: A text element
+    - `7`: Caroutine
+    - `8`: Handler
+    - `9`: Yield
+    - `10`: Fragments
+
+- `key`: It is the same key used to uniquely identify elements in React during reconciliation. In this example, it is `null` since no key was used.
+
+- `type`: It represents the original type of the React element as the user defines it, such as function components, class components, a special React type such as Fragmenet, or string with the HTML tag name for host elements. 
+- `elementType`: It is used when `type` needs to be modified or resolved in order to reperesent the latest version of `type` in hot-reloading environments. Example of why `elementType` is used:
+    ```
+    // Original component
+    function MyComponent() {
+        // ...
+        }
+
+    // Usage in the app
+    const element = <MyComponent />;
+    ```
+Let's say `MyComponent` is updated and you perform hot-reloading,  `type` might still refer to the old version of `MyComponent`, and hence `elementType` is used to resolve `type` during hot-reloading.
+- `stateNode`: It refers to the actual component instance or the DOM element. In this case, it refers to the button element in the DOM.
+
+
+We expend further the `__reactFiber$hwiy9k0i6jt` and we obtain more details about the fiber node:
 
 ```
 __reactFiber$hwiy9k0i6jt: FiberNode
-  actualDuration: 0.4000000059604645
-  actualStartTime: 1474.7000000178814
+  actualDuration: 0.19999998807907104
+  actualStartTime: 1340
   alternate: null
-  child: 
-  FiberNode {tag: 6, key: null, elementType: null, type: null
+  child: FiberNode {tag: 6, key: null, elementType: null, type: null
   stateNode: text, …}
   childLanes: 0
   deletions: null
@@ -78,3 +111,69 @@ onClick: ƒ updateCounter()
   [[FunctionLocation]]: App.jsx:9`
 ```
 
+- `actualDuration`: It is the total time in ms spent in order to render the component and its descentdents.
+- `actualStartTime`: It is the timestamp in ms when the rendering of the component started.
+
+These information could be used in **performance profiling**. Let's continue with the other fiber data:
+
+- `alternate`: It is the alternate version representing the new state of the tree. In this case it is null because we have the initial render and nothing triggered a change in the state, and hence no re-render is triggered. After clicking on the button to increment the counter, the counter value becomes 1, the state will be updated and a re-render is triggered. The alternate value becomes:
+
+```
+alternate: FiberNode
+actualDuration: 0.09999999403953552
+actualStartTime: 49094.09999999404
+alternate: FiberNode {tag: 5, key: null, elementType: 'button', type: 'button', stateNode: button, …}
+child: FiberNode {tag: 6, key: null, elementType: null, type: null, stateNode: text, …}
+childLanes: 0
+deletions: null
+dependencies: null
+elementType: "button"
+flags: 4
+index: 0
+key: null
+lanes: 0
+memoizedProps: 
+  children: Array(2)
+  0: "count is "
+  1: 1
+  length: 2
+.
+.
+.
+```
+- `child`: It points to the child of the button fiber, and in this case, it is the text node which has as value "count is" plus the counter value.
+- `childLanes`: Lanes in React are a concept related to scheduling and concurrent mode. A lane is a way to mark work with priority, and in this case is `0` which indicates no specific priority. It is associated with a subtree of the fiber node.
+- `deletions`: It represents any nodes marked for deletion during the most recent update, and in this case it is `null`.
+- `dependencies`: It is related to the concurrent mode and tracking asynchronous updates. In this case, it is `null`.
+- `flags`: They are used for internal bookkeeping. `0` means no flag is set.
+- `index`: It represents the index of the fiber node in the parent's child list. 
+- `lanes`: similar to `childLanes`.
+- `memoizedProps`: It contains the props that were commited to the fiber in the last update. (In this example, it is an array of two values: `count is`, and `0` before clicking the button, and has `onClick` for the function `updateCounter).
+       -  children:Array(2)
+           0: "count is "
+           1: 0
+           length: 2
+           [[Prototype]]: Array(0)
+       -  onClick: ƒ updateCounter()
+           length: 0
+           name: "updateCounter"   
+- `memoizedState`:
+- `mode`: It represents the rendering mode (Eg. `ConcurrentMode`)
+- `pendingProps`: It contains the props which are about to be committed.
+       -  children:Array(2)
+           0: "count is "
+           1: 0
+           length: 2
+           [[Prototype]]: Array(0)  
+       -  onClick: ƒ updateCounter()
+           length: 0
+           name: "updateCounter"  
+- `ref`: Is is `ref` used in a react elements, it indicates a reference to the underlying instance of a given component in order to access it or it underlying DOM element. In this example, it is `null` because ref was not attached to the `MyButton` component.           
+- `return`: It points to the fiber parent node in the tree.  
+- `selfBaseDuration`: It is the time the component takes to render itself, without its children.
+- `sibling`: It points to the next sibling of the child of the fiber node. In this case it is `null` because only `button` is returned and it has no other siblings returned with it.
+- `subtreeFlags`: It indicates some flags related to the subtree.
+- `treeBaseDuration`: It is the time the component takes to render itself and its children.
+- `updateQueue`: It contains the pending updates for the fiber node, used to manage state and props updates.
+
+For more, check [React Fiber source code](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/packages/react-reconciler/src/ReactFiber.js)
