@@ -1,6 +1,8 @@
 # React Fiber
 
-This codebase is used for debugging fiber's data structure and the different functions invovled in the reconciliation.
+This codebase is used for debugging fiber's data structure and the different functions invovled in the reconciliation. 
+
+The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter.
 
 This app is rendered by:
 
