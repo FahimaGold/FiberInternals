@@ -22,7 +22,9 @@ Fibers are also considered as a ***unit of work*** and give priorities to the di
 
 Except NoPriority, the priorities are mentioned in a descending order. ImmediatePriority can be something related to a UI interaction and needs to be executed immediately for a great user experience. Some other tasks can wait until the main thread is idle and can be executed by then. 
 
-This codebase is used for debugging fiber's data structure and the different functions involved in the reconciliation. 
+## 🏃‍♂️ To Debugging ##
+
+This app codebase is used for debugging fiber's data structure and the different functions involved in the reconciliation. 
 
 The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter.
 
