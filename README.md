@@ -1,6 +1,28 @@
 # React Fiber
 
-This codebase is used for debugging fiber's data structure and the different functions invovled in the reconciliation. 
+## Brief Overview of React Fibers
+
+React Fiber is the new reconcilier that was created from scratch starting from `React 16` in order to overcome the shortcomings of using the javascript call stack (which I will soon speak of in an article). React fiber came into place for these four reasons:
+- Pause a work and come back to it later
+- Assign priority to different types of work
+- Reuse previously completed work
+- Abort work if it's no longer needed
+
+💫 ***What is exaclty fiber at implementation level?***
+
+A fiber is simply a javascript object that contains information about React elements and components, such as the type of the element, the key, the props passed to the given element, etc.
+
+Fibers are also considered as a ***unit of work*** and give priorities to the different units of work so that they are executed based on their priorities. The priorities are defined in [SchedulerPriorities.js](https://github.com/facebook/react/blob/main/packages/scheduler/src/SchedulerPriorities.js):
+-  `0`: NoPriority
+-  `1`: ImmediatePriority
+-  `2`: UserBlockingPriority
+-  `3`: NormalPriority
+-  `4`: LowPriority
+-  `5`: IdlePriority
+
+Except NoPriority, the priorities are mentioned in a descending order. ImmediatePriority can be something related to a UI interaction and needs to be executed immediately for a great user experience. Some other tasks can wait until the main thread is idle and can be executed by then. 
+
+This codebase is used for debugging fiber's data structure and the different functions involved in the reconciliation. 
 
 The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter.
 
