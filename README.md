@@ -27,7 +27,7 @@ FiberNode `{tag: 5, key: null, elementType: 'button', type: 'button', stateNode:
 `{children: Array(2), onClick: ƒ}`.
 
 
-## Description the content of the fiber tree
+## Description of the content of the fiber tree
 
 The fiber node in `__reactFiber$hwiy9k0i6jt` of the `MyButton` component contains the following properties:
 - `tag`: It is a number that represents the type of the fiber. For instance, `5` means a DOM element, `6` a text node, and here is the entire list from [react describeFibers.js](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/fixtures/fiber-debugger/src/describeFibers.js#L12):
