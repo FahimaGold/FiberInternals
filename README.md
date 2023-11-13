@@ -45,8 +45,8 @@ The fiber node in `__reactFiber$hwiy9k0i6jt` of the `MyButton` component contain
 
 - `key`: It is the same key used to uniquely identify elements in React during reconciliation. In this example, it is `null` since no key was used.
 
-- `type`: It represents the original type of the React element as the user defines it, such as function components, class components, a special React type such as Fragmenet, or string with the HTML tag name for host elements. 
-- `elementType`: It is used when `type` needs to be modified or resolved in order to reperesent the latest version of `type` in hot-reloading environments. Example of why `elementType` is used:
+- `elementType`: It represents the original type of the React element as the user defines it, such as function components, class components, a special React type such as Fragmenet, or string with the HTML tag name for host elements. 
+- `type`: It is used when `type` needs to be modified or resolved in order to reperesent the latest version of `type` in hot-reloading environments. Example of why `elementType` is used:
     ```
     // Original component
     function MyComponent() {
