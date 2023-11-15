@@ -43,7 +43,7 @@ Now let's look at the fiber's tree, which displays only 3 host elements:
 
 ![fiber tree](img/fiber_tree.png)
 
-`<div>`, `h1`, and `<button>`. If we expand the button element, we get to see  the following:
+`<div>`, `h1`, and `<button>`, which are the parents of each subtree. We also see that `MyButton` component, which is a wrapper of `button`is not shown in the fiber tree, and instead, `button` is shown directly. If we expand the button element, we get to see  the following:
 
 ![fiber button structure](img/fiber_button_structure.png)
 
