@@ -182,8 +182,8 @@ memoizedProps:
            [[Prototype]]: Array(0)
        -  onClick: ƒ updateCounter()
            length: 0
-           name: "updateCounter"   
-- `memoizedState`:
+           name: "updateCounter"  
+- `memoizedState`: It contains the state of the component that was commited in the last render.
 - `mode`: It represents the rendering mode (Eg. `ConcurrentMode`)
 - `pendingProps`: It contains the props which are about to be committed.
        -  children:Array(2)
