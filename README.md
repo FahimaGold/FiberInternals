@@ -203,3 +203,20 @@ memoizedProps:
 - `updateQueue`: It contains the pending updates for the fiber node, used to manage state and props updates.
 
 For more, check [React Fiber source code](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/packages/react-reconciler/src/ReactFiber.js)
+
+## Call stack on button click
+
+When we click the button, the counter will be incremented, I tracked the stack on the browser, and here are the different functions that were called:
+
+![Call stack](img/button_update_stack.png)
+
+- `flushSyncCallbacks`:
+- `performSyncWorkOnRoot`:
+- `renderRootSnyc`:
+- `workLoopSnyc`:
+- `performUnitOfWork`:
+- `beginWork$1`:
+- `beginWork`:
+- `updateFunctionComponent`:
+- `renderWithHooks`:
+
