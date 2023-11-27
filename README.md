@@ -206,8 +206,8 @@ For more, check [React Fiber source code](https://github.com/facebook/react/blob
 
 ## Call stack before button click
 
-![Call stack](img/call_stack_before_button_click_2.png)
-![Call stack](img/call_stack_before_button_click_1.png)
+![Call stack](img/call_stack_on_render_2.png)
+![Call stack](img/call_stack_on_render_1.png)
 
 1. `ReactDOMHydrationRoot.render.ReactDOMRoot.render`:
 2. `updateContainer`:
