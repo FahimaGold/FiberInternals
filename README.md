@@ -204,19 +204,67 @@ memoizedProps:
 
 For more, check [React Fiber source code](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/packages/react-reconciler/src/ReactFiber.js)
 
+## Call stack before button click
+
+![Call stack](img/call_stack_before_button_click_2.png)
+![Call stack](img/call_stack_before_button_click_1.png)
+
+1. `ReactDOMHydrationRoot.render.ReactDOMRoot.render`:
+2. `updateContainer`:
+3. `scheduleUpdateOnFiber`:
+4. `ensureRootIsScheduled`:
+5. `scheduleCallback$1`:
+6. `unstable_scheduleCallback`:
+7. `requestHostCallback`:
+8. `schedulePerformWorkUntilDeadline`:
+9. `postMessage`:
+10. `performWorkUntilDeadline`:
+11. `flushWork`:
+12. `workLoop`:
+13. `performConcurrentWorkOnRoot`:
+14. `renderRootSync`:
+15. `workLoopSync`: 
+16. `performUnitOfWork`
+17. `beginWork$1`:
+18. `beginWork`:
+19. `mountIndeterminateComponent`:
+20. `renderWithHooks`:
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Call stack on button click
 
 When we click the button, the counter will be incremented, I tracked the stack on the browser, and here are the different functions that were called:
 
 ![Call stack](img/button_update_stack.png)
 
-- `flushSyncCallbacks`:
-- `performSyncWorkOnRoot`:
-- `renderRootSnyc`:
-- `workLoopSnyc`:
-- `performUnitOfWork`:
-- `beginWork$1`:
-- `beginWork`:
-- `updateFunctionComponent`:
-- `renderWithHooks`:
+1. `flushSyncCallbacks`:
+2. `performSyncWorkOnRoot`:
+3. `renderRootSync`:
+4. `workLoopSnyc`:
+5. `performUnitOfWork`:
+6. `beginWork$1`:
+7. `beginWork`:
+8. `updateFunctionComponent`:
+9. `renderWithHooks`:
 
