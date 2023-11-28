@@ -209,48 +209,44 @@ For more, check [React Fiber source code](https://github.com/facebook/react/blob
 ![Call stack](img/call_stack_on_render_2.png)
 ![Call stack](img/call_stack_on_render_1.png)
 
-1. `ReactDOMHydrationRoot.render.ReactDOMRoot.render`:
-2. `updateContainer`:
-3. `scheduleUpdateOnFiber`:
-4. `ensureRootIsScheduled`:
-5. `scheduleCallback$1`:
-6. `unstable_scheduleCallback`:
-7. `requestHostCallback`:
-8. `schedulePerformWorkUntilDeadline`:
-9. `postMessage`:
-10. `performWorkUntilDeadline`:
-11. `flushWork`:
-12. `workLoop`:
-13. `performConcurrentWorkOnRoot`:
-14. `renderRootSync`:
-15. `workLoopSync`: 
-16. `performUnitOfWork`
+1. `ReactDOMHydrationRoot.render.ReactDOMRoot.render`: Both `ReactDOMHydrationRoot.prototype` and `ReactDOMRoot.prototype` are assigned the `render` function. This function takes the react elements that are being rendered, and it calls the next method `updateContainer`.`ReactDOMRoot` reperesents a root instance created by `ReactDOM.createRoot` while `ReactDOMHydrationRoot` represents a root instance created with the `hydrate` option. For more, you can check the source code of this function in [ReactDOMRoot.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-dom/src/client/ReactDOMRoot.js#L246).
+2. `updateContainer`: This function schedules updates of the content of a container with a new React element on the fiber tree by calling `scheduleUpdateOnFiber`. For more, check [ReactFiberReconciler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberReconciler.js)
+3. `scheduleUpdateOnFiber`: This function as it names indicates, is responsible for scheduling an update on specific fiber given a fiber root. For more, check [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberWorkLoop.js#L720)
+4. `ensureRootIsScheduled`: This function is called when a root receives an update. It ensures that the root is in the root schedule, and that there is a pending microtask to process the root schedule. For more, check [ReactFiberRootScheduler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberRootScheduler.js) 
+5. `scheduleCallback$1`: It looks like a variant of `scheduleCallback`. I didn't find it in the source code of react. From the browser:
+````
+function scheduleCallback$1(priorityLevel, callback) {
+  {
+    // If we're currently inside an `act` scope, bypass Scheduler and push to
+    // the `act` queue instead.
+    var actQueue = ReactCurrentActQueue$1.current;
+
+    if (actQueue !== null) {
+      actQueue.push(callback);
+      return fakeActCallbackNode;
+    } else {
+      return scheduleCallback(priorityLevel, callback);
+    }
+  }
+}
+````
+It basically checks if the app is running in an `act` scope and adjusts the scheduling accordingly.
+6. `unstable_scheduleCallback`: This is a core function of the [Scheduler.js](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js).It schedules a callback for a given task taking into account the task's priority, the start time, and the delay of the task when it can be delayed. It enqueues tasks in the ***timer queue*** when the start time is greater than the current time, and enqueues them in the ***tasks queue*** otherwise. If all tasks are delayed, a host timeout is scheduled. A host callback is scheduled otherwise. 
+7. `requestHostCallback`: This function is called in the previous function `unstable_scheduleCallback` indicating that this task is not  delayed, and it is picked from the `task queue`. This function is is also part of the `Scheduler`, and it basically starts the `messageLoop` of the `Scheduler` and runs the next method `schedulePerformWorkUntilDeadline`.
+8. `schedulePerformWorkUntilDeadline`: Also part of the `Scheduler`, and it chooses the best available native scheduling method in the browsers to schedule callbacks. It favors `setImmediate` since it runs right as early as possible after the current event loop cycle, while `setTimeout` has a delay of minimum 4ms, and it's not convenient when timeouts are too small. `setImmediate` is supported in NodeJs and Internet Explorer only. Therefore, in a different environment, the scheduler searches if the browser supports `MessageChannel`, which is relatively modern and supported in DOM and worker environments, and it is also a scheduling mechanism.  
+9. `postMessage`: During this experiment, I ran the app in a recent version of `Chrome`, and looks like `schedulePerformWorkUntilDeadline` picked `MessageChannel` as a scheduling mechanism, and it contains two ports and two methods: `onMessage`and `postMessage`. `onMessage` is the event handler and it runs the next function called in the stack `performWorkUntilDeadline`. `postMessage` is used to send messages between the ports, so it basically sends a method through `MessageChannel` to notify that there is a message to be processed. 
+10. `performWorkUntilDeadline`: This is also part of the `Scheduler` and it is run in `onMessage`. It is run when the scheduler `MessageLoop` is running, and checks if there is more work to do, it will call the next function `flushWork`, and will call `schedulePerformWorkUntilDeadline` to schedule the next task. When there is no more work, it will stop the `MessageLoop` and will yield control to the browser main thread. 
+11. `flushWork`: It is also part of the `Scheduler`. It initiates the `workLoop` function.
+12. `workLoop`: Also part of the `Scheduler`. This function is responsible for executing the tasks, and it uses inside it the `advanceTimers` function.  This method makes sure it doesn't exceed the frame interval of the browser, and it yields control to the browser in that case. This method also checks if a callback is a continuation callback, which signals to the scheduler if a task is big so that it will continue execution in later iterations. When a continuation callback is returned, this continuation callback is assigned to the current task's callback, and the scheduler yields back control to the main thread, regardless of how much time is left in the current time slice. This mechanism is used to break large tasks into smaller units and maintain a responsive UI. 
+13. `performConcurrentWorkOnRoot`: This function is part of the [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/c17a27ef492d9812351aecdfb017488e8e8404ce/packages/react-reconciler/src/ReactFiberWorkLoop.js#L886). It is a core function in the rendering process, handling both **concurrent** and **synchronous** rendering, error recovry, and scheduling future updates. This function disables time slicing for blocked and long situations (such as expired lanes or when the work has been CPU-bound for too long), and it is enabled otherwise in order to improve the responsiveness of the application. When time slicing is enabled, this function performs a concurrent rendering by calling `renderRootConcurrent`, and when disabled, it is disabled, this function performs syncronous rendering by calling `renderRootSync`.
+14. `renderRootSync`: Also part of `ReactFiberWorkLoop.js`. React team is thinking of unifying this function with `renderRootConcurrent` since their code is similar. It is responsible for rendering syncronously by calling the core method `workLoopSync`. 
+15. `workLoopSync`: Also part of `ReactFiberWorkLoop.js`. It basically runs a while loop as long as there is still work to do, without checking if there is need to yield between fibers, and calls within that loop the function `performUnitOfWork`. 
+16. `performUnitOfWork`: Also part of `ReactFiberWorkLoop.js`, and takes as argument a fiber. It calls within it the function `beginWork`, and the work is performed on the alternate fiber. The fiber's pending props are updated in the fiber's memoized props, and checks if no next fiber to work on (i.e when `beginWork` returns null), `completeUnitOfWork` will be called, the next fiber from the fiber tree will be handled otherwise.
 17. `beginWork$1`:
 18. `beginWork`:
 19. `mountIndeterminateComponent`:
 20. `renderWithHooks`:
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## Call stack on button click
 
