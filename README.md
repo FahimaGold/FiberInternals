@@ -257,7 +257,7 @@ When we click the button, the counter will be incremented, I tracked the stack o
 1. `flushSyncCallbacks`:
 2. `performSyncWorkOnRoot`:
 3. `renderRootSync`:
-4. `workLoopSnyc`:
+4. `workLoopSync`:
 5. `performUnitOfWork`:
 6. `beginWork$1`:
 7. `beginWork`:
