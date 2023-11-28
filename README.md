@@ -204,7 +204,7 @@ memoizedProps:
 
 For more, check [React Fiber source code](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/packages/react-reconciler/src/ReactFiber.js)
 
-## Call stack before button click
+## Call stack on initial render
 
 ![Call stack](img/call_stack_on_render_2.png)
 ![Call stack](img/call_stack_on_render_1.png)
