@@ -303,13 +303,9 @@ When we click the button, the counter will be incremented, I tracked the stack o
 
 ![Call stack](img/button_update_stack.png)
 
-1. `flushSyncCallbacks`:
-2. `performSyncWorkOnRoot`:
-3. `renderRootSync`:
-4. `workLoopSync`:
-5. `performUnitOfWork`:
-6. `beginWork$1`:
-7. `beginWork`:
-8. `updateFunctionComponent`:
-9. `renderWithHooks`:
+We notice that most of the functions being called during the updating the state of the counter, were called also in the initial rendering, and the new functions here are: 
+-  `flushSyncCallbacks`: This function loops through the callbacks in a synchrnous queue and executes them. You can find this function here: [ReactFiberSyncTaskQueue.js](https://github.com/facebook/react/blob/93c10dfa6b0848c12189b773b59c77d74cad2a1a/packages/react-reconciler/src/ReactFiberSyncTaskQueue.js)
+- `performSyncWorkOnRoot`: This is the entry point to synchronous that don't pass by the `Scheduler`. It performs sync rendering by calling the function `renderRootSync` and it handles errors as well. This function is part of `ReactFiberWorkLoop.js`.
+- `updateFunctionComponent`: This function is part of `ReactFiberBeginWork.js`. This function is called because the type component that is being updated is `FunctionComponent` (in this app example is `MyButton`). It renders this component by calling the function `renderWithHooks`.
+
 
