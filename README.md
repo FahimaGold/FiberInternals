@@ -28,7 +28,7 @@ This app codebase is used for debugging fiber's data structure and the different
 
 The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter. 
 
-[app_page](./img/app_page.png)
+![app_page](./img/app_page.png)
 
 This app is rendered by:
 
