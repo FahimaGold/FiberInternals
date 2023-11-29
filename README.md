@@ -242,10 +242,59 @@ It basically checks if the app is running in an `act` scope and adjusts the sche
 14. `renderRootSync`: Also part of `ReactFiberWorkLoop.js`. React team is thinking of unifying this function with `renderRootConcurrent` since their code is similar. It is responsible for rendering syncronously by calling the core method `workLoopSync`. 
 15. `workLoopSync`: Also part of `ReactFiberWorkLoop.js`. It basically runs a while loop as long as there is still work to do, without checking if there is need to yield between fibers, and calls within that loop the function `performUnitOfWork`. 
 16. `performUnitOfWork`: Also part of `ReactFiberWorkLoop.js`, and takes as argument a fiber. It calls within it the function `beginWork`, and the work is performed on the alternate fiber. The fiber's pending props are updated in the fiber's memoized props, and checks if no next fiber to work on (i.e when `beginWork` returns null), `completeUnitOfWork` will be called, the next fiber from the fiber tree will be handled otherwise.
-17. `beginWork$1`:
-18. `beginWork`:
-19. `mountIndeterminateComponent`:
-20. `renderWithHooks`:
+17. `beginWork$1`: This function is probably used generated in debugging, it calls the React `beginWork` function with extra error handling, and it looks as following:
+```
+  beginWork$1 = function (current, unitOfWork, lanes) {
+    // If a component throws an error, we replay it again in a synchronously
+    // dispatched event, so that the debugger will treat it as an uncaught
+    // error See ReactErrorUtils for more information.
+    // Before entering the begin phase, copy the work-in-progress onto a dummy
+    // fiber. If beginWork throws, we'll use this to reset the state.
+    var originalWorkInProgressCopy = assignFiberPropertiesInDEV(dummyFiber, unitOfWork);
+
+    try {
+      return beginWork(current, unitOfWork, lanes);
+    } catch (originalError) {
+      if (didSuspendOrErrorWhileHydratingDEV() || originalError !== null && typeof originalError === 'object' && typeof originalError.then === 'function') {
+        // Don't replay promises.
+        // Don't replay errors if we are hydrating and have already suspended or handled an error
+        throw originalError;
+      } // Keep this code in sync with handleError; any changes here must have
+      // corresponding changes there.
+
+      resetContextDependencies();
+      resetHooksAfterThrow(); // Don't reset current debug fiber, since we're about to work on the
+      // same fiber again.
+      // Unwind the failed stack frame
+
+      unwindInterruptedWork(current, unitOfWork); // Restore the original properties of the fiber.
+
+      assignFiberPropertiesInDEV(unitOfWork, originalWorkInProgressCopy);
+
+      if ( unitOfWork.mode & ProfileMode) {
+        // Reset the profiler timer.
+        startProfilerTimer(unitOfWork);
+      } // Run beginWork again.
+
+      invokeGuardedCallback(null, beginWork, null, current, unitOfWork, lanes);
+
+      if (hasCaughtError()) {
+        var replayError = clearCaughtError();
+
+        if (typeof replayError === 'object' && replayError !== null && replayError._suppressLogging && typeof originalError === 'object' && originalError !== null && !originalError._suppressLogging) {
+          // If suppressed, let the flag carry over to the original error which is the one we'll rethrow.
+          originalError._suppressLogging = true;
+        }
+      } // We always throw the original error in case the second render pass is not idempotent.
+      // This can happen if a memoized function or CommonJS module doesn't throw after first invocation.
+
+      throw originalError;
+    }
+  };
+```
+18. `beginWork`: This function checks if there is a change in `props` or `context`, and then according to the type of the component, it delegates the work to the appropriate function. For example, if the component type is a `FunctionComponent`, `beginWork` will delegate the work `updateFunctionComponent`, and delegate it to `mountIndeterminateComponent` when the component type is `IndeterminateComponent`. You can check the full source code in [ReactFiberBeginWork.js](https://github.com/facebook/react/blob/c17a27ef492d9812351aecdfb017488e8e8404ce/packages/react-reconciler/src/ReactFiberBeginWork.js).
+19. `mountIndeterminateComponent`: This function is responsible for mounting `IndeterminateComponent` (which can be `FunctionComponent` or `ClassComponent`). This function is also part of `ReactFiberBeginWork.js`.
+20. `renderWithHooks`: This function is found in [ReactFiberHooks.js](https://github.com/facebook/react/blob/c17a27ef492d9812351aecdfb017488e8e8404ce/packages/react-reconciler/src/ReactFiberHooks.js). It is responsible for rendering components that may uses `hooks`. 
  
 
 ## Call stack on button click
