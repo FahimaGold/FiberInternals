@@ -26,7 +26,9 @@ Except NoPriority, the priorities are mentioned in a descending order. Immediate
 
 This app codebase is used for debugging fiber's data structure and the different functions involved in the reconciliation. 
 
-The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter.
+The app is very simple, created using `Vite`, I just created a component `MyButton` and used it in the App so that when clicked, it increments a counter. 
+
+[app_page](./img/app_page.png)
 
 This app is rendered by:
 
