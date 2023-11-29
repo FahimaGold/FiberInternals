@@ -244,6 +244,7 @@ It basically checks if the app is running in an `act` scope and adjusts the sche
 ✨ `requestHostCallback`: This function is called in the previous function `unstable_scheduleCallback` indicating that this task is not  delayed, and it is picked from the `task queue`. This function is is also part of the `Scheduler`, and it basically starts the `messageLoop` of the `Scheduler` and runs the next method `schedulePerformWorkUntilDeadline`.
 
 ✨ `schedulePerformWorkUntilDeadline`: Also part of the `Scheduler`, and it chooses the best available native scheduling method in the browsers to schedule callbacks. It favors `setImmediate` since it runs right as early as possible after the current event loop cycle, while `setTimeout` has a delay of minimum 4ms, and it's not convenient when timeouts are too small. `setImmediate` is supported in NodeJs and Internet Explorer only. Therefore, in a different environment, the scheduler searches if the browser supports `MessageChannel`, which is relatively modern and supported in DOM and worker environments, and it is also a scheduling mechanism.  
+
 ✨ `postMessage`: During this experiment, I ran the app in a recent version of `Chrome`, and looks like `schedulePerformWorkUntilDeadline` picked `MessageChannel` as a scheduling mechanism, and it contains two ports and two methods: `onMessage`and `postMessage`. `onMessage` is the event handler and it runs the next function called in the stack `performWorkUntilDeadline`. `postMessage` is used to send messages between the ports, so it basically sends a method through `MessageChannel` to notify that there is a message to be processed. 
 
 ✨ `performWorkUntilDeadline`: This is also part of the `Scheduler` and it is run in `onMessage`. It is run when the scheduler `MessageLoop` is running, and checks if there is more work to do, it will call the next function `flushWork`, and will call `schedulePerformWorkUntilDeadline` to schedule the next task. When there is no more work, it will stop the `MessageLoop` and will yield control to the browser main thread. 
@@ -255,8 +256,11 @@ It basically checks if the app is running in an `act` scope and adjusts the sche
 ✨ `performConcurrentWorkOnRoot`: This function is part of the [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/c17a27ef492d9812351aecdfb017488e8e8404ce/packages/react-reconciler/src/ReactFiberWorkLoop.js). This function is the entry point to anything that goes through the scheduler, and it is a core function in the rendering process, handling both **concurrent** and **synchronous** rendering, error recovry, and scheduling future updates. This function disables time slicing for blocked and long situations (such as expired lanes or when the work has been CPU-bound for too long), and it is enabled otherwise in order to improve the responsiveness of the application. When time slicing is enabled, this function performs a concurrent rendering by calling `renderRootConcurrent`, and when disabled, it is disabled, this function performs syncronous rendering by calling `renderRootSync`.
 
 ✨ `renderRootSync`: Also part of `ReactFiberWorkLoop.js`. React team is thinking of unifying this function with `renderRootConcurrent` since their code is similar. It is responsible for rendering syncronously by calling the core method `workLoopSync`. 
+
 ✨ `workLoopSync`: Also part of `ReactFiberWorkLoop.js`. It basically runs a while loop as long as there is still work to do, without checking if there is need to yield between fibers, and calls within that loop the function `performUnitOfWork`. 
+
 ✨ `performUnitOfWork`: Also part of `ReactFiberWorkLoop.js`, and takes as argument a fiber. It calls within it the function `beginWork`, and the work is performed on the alternate fiber. The fiber's pending props are updated in the fiber's memoized props, and checks if no next fiber to work on (i.e when `beginWork` returns null), `completeUnitOfWork` will be called, the next fiber from the fiber tree will be handled otherwise.
+
 ✨ `beginWork$1`: This function is probably used generated in debugging, it calls the React `beginWork` function with extra error handling, and it looks as following:
 ```
   beginWork$1 = function (current, unitOfWork, lanes) {
@@ -307,6 +311,7 @@ It basically checks if the app is running in an `act` scope and adjusts the sche
     }
   };
 ```
+
 ✨ `beginWork`: This function checks if there is a change in `props` or `context`, and then according to the type of the component, it delegates the work to the appropriate function. For example, if the component type is a `FunctionComponent`, `beginWork` will delegate the work `updateFunctionComponent`, and delegate it to `mountIndeterminateComponent` when the component type is `IndeterminateComponent`. You can check the full source code in [ReactFiberBeginWork.js](https://github.com/facebook/react/blob/c17a27ef492d9812351aecdfb017488e8e8404ce/packages/react-reconciler/src/ReactFiberBeginWork.js).
 
 ✨ `mountIndeterminateComponent`: This function is responsible for mounting `IndeterminateComponent` (which can be `FunctionComponent` or `ClassComponent`). This function is also part of `ReactFiberBeginWork.js`.
