@@ -213,8 +213,8 @@ For more, check [React Fiber source code](https://github.com/facebook/react/blob
 2. `updateContainer`: This function schedules updates of the content of a container with a new React element on the fiber tree by calling `scheduleUpdateOnFiber`. For more, check [ReactFiberReconciler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberReconciler.js)
 3. `scheduleUpdateOnFiber`: This function as it names indicates, is responsible for scheduling an update on specific fiber given a fiber root. For more, check [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberWorkLoop.js#L720)
 4. `ensureRootIsScheduled`: This function is called when a root receives an update. It ensures that the root is in the root schedule, and that there is a pending microtask to process the root schedule. For more, check [ReactFiberRootScheduler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberRootScheduler.js) 
-5. `scheduleCallback$1`: It looks like a variant of `scheduleCallback`. I didn't find it in the source code of react. From the browser:
-````
+5. `scheduleCallback$1`: This function is generated during debugging. It is a wrapper around the React `scheduleCallback` function with extra check for the `act` scope which is used in React testing utilities to ensure that certain parts of the component tree are batched together and their effects are flushed synchronously. It looks like the following:
+```
 function scheduleCallback$1(priorityLevel, callback) {
   {
     // If we're currently inside an `act` scope, bypass Scheduler and push to
@@ -229,7 +229,7 @@ function scheduleCallback$1(priorityLevel, callback) {
     }
   }
 }
-````
+```
 It basically checks if the app is running in an `act` scope and adjusts the scheduling accordingly.
 6. `unstable_scheduleCallback`: This is a core function of the [Scheduler.js](https://github.com/facebook/react/blob/main/packages/scheduler/src/forks/Scheduler.js).It schedules a callback for a given task taking into account the task's priority, the start time, and the delay of the task when it can be delayed. It enqueues tasks in the ***timer queue*** when the start time is greater than the current time, and enqueues them in the ***tasks queue*** otherwise. If all tasks are delayed, a host timeout is scheduled. A host callback is scheduled otherwise. 
 7. `requestHostCallback`: This function is called in the previous function `unstable_scheduleCallback` indicating that this task is not  delayed, and it is picked from the `task queue`. This function is is also part of the `Scheduler`, and it basically starts the `messageLoop` of the `Scheduler` and runs the next method `schedulePerformWorkUntilDeadline`.
