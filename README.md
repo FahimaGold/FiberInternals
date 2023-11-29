@@ -58,7 +58,7 @@ FiberNode `{tag: 5, key: null, elementType: 'button', type: 'button', stateNode:
 ## Description of the content of the fiber tree
 
 The fiber node in `__reactFiber$hwiy9k0i6jt` of the `MyButton` component contains the following properties:
-- `tag`: It is a number that represents the type of the fiber. For instance, `5` means a DOM element, `6` a text node, and here is the entire list from [react describeFibers.js](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/fixtures/fiber-debugger/src/describeFibers.js#L12):
+- `tag`: It is a number that represents the type of the fiber. For instance, `5` means a DOM element, `6` a text node, and here is the entire list from [react describeFibers.js](https://github.com/facebook/react/blob/432b9f1d9729aaea010730d546bda89b9842eaa1/fixtures/fiber-debugger/src/describeFibers.js):
     - `0`: Indeterminate
     - `1`: Function component
     - `2`: Class component
@@ -211,11 +211,11 @@ For more, check [React Fiber source code](https://github.com/facebook/react/blob
 ![Call stack](img/call_stack_on_render_2.png)
 ![Call stack](img/call_stack_on_render_1.png)
 
-✨ `ReactDOMHydrationRoot.render.ReactDOMRoot.render`: Both `ReactDOMHydrationRoot.prototype` and `ReactDOMRoot.prototype` are assigned the `render` function. This function takes the react elements that are being rendered, and it calls the next method `updateContainer`.`ReactDOMRoot` reperesents a root instance created by `ReactDOM.createRoot` while `ReactDOMHydrationRoot` represents a root instance created with the `hydrate` option. For more, you can check the source code of this function in [ReactDOMRoot.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-dom/src/client/ReactDOMRoot.js#L246).
+✨ `ReactDOMHydrationRoot.render.ReactDOMRoot.render`: Both `ReactDOMHydrationRoot.prototype` and `ReactDOMRoot.prototype` are assigned the `render` function. This function takes the react elements that are being rendered, and it calls the next method `updateContainer`.`ReactDOMRoot` reperesents a root instance created by `ReactDOM.createRoot` while `ReactDOMHydrationRoot` represents a root instance created with the `hydrate` option. For more, you can check the source code of this function in [ReactDOMRoot.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-dom/src/client/ReactDOMRoot.js).
 
 ✨ `updateContainer`: This function schedules updates of the content of a container with a new React element on the fiber tree by calling `scheduleUpdateOnFiber`. For more, check [ReactFiberReconciler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberReconciler.js)
 
-✨ `scheduleUpdateOnFiber`: This function as it names indicates, is responsible for scheduling an update on specific fiber given a fiber root. For more, check [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberWorkLoop.js#L720)
+✨ `scheduleUpdateOnFiber`: This function as it names indicates, is responsible for scheduling an update on specific fiber given a fiber root. For more, check [ReactFiberWorkLoop.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberWorkLoop.js)
 
 ✨ `ensureRootIsScheduled`: This function is called when a root receives an update. It ensures that the root is in the root schedule, and that there is a pending microtask to process the root schedule. For more, check [ReactFiberRootScheduler.js](https://github.com/facebook/react/blob/6c7b41da3de12be2d95c60181b3fe896f824f13a/packages/react-reconciler/src/ReactFiberRootScheduler.js) 
 
