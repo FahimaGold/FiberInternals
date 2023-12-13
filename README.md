@@ -20,7 +20,7 @@ Fibers are also considered as a ***unit of work*** and give priorities to the di
 -  `4`: LowPriority
 -  `5`: IdlePriority
 
-Except NoPriority, the priorities are mentioned in a descending order. ImmediatePriority can be something related to a UI interaction and needs to be executed immediately for a great user experience. Some other tasks can wait until the main thread is idle and can be executed by then. 
+Except NoPriority, the priorities are mentioned in a descending order. ImmediatePriority. UserBlockingPriority is the next in the highest priority, and can be something related to a UI interaction and needs to be executed the sooner for a great user experienceSome other tasks can wait until the main thread is idle and can be executed by then. 
 
 ## 🏃‍♂️ To Debugging ##
 
