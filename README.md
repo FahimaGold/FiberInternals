@@ -2,7 +2,7 @@
 
 ## Brief Overview of React Fibers
 
-React Fiber is the new reconcilier that was created from scratch starting from `React 16` in order to overcome the shortcomings of using the javascript call stack (which I will soon speak of in an article). React fiber came into place for these four reasons:
+React Fiber is the new reconcilier that was created from scratch starting from `React 16` in order to overcome the shortcomings of using the javascript call stack (you find all the details in [this article] (https://df-mokhtari.medium.com/part-2-react-reconciliation-a-deep-dive-react-fibers-28fba20e3334)). React fiber came into place for these four reasons:
 - Pause a work and come back to it later
 - Assign priority to different types of work
 - Reuse previously completed work
